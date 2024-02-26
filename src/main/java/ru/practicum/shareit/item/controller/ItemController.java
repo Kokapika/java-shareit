@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.model.ItemDto;
-import ru.practicum.shareit.item.service.ItemServiceDtoImpl;
+import ru.practicum.shareit.item.service.ItemServiceImpl;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemController {
     public static final String USER_HEADER = "X-Sharer-User-Id";
-    private final ItemServiceDtoImpl itemServiceDtoImpl;
+    private final ItemServiceImpl itemServiceDtoImpl;
 
     @PostMapping
     public ItemDto addItem(@RequestHeader(USER_HEADER) Long userId,

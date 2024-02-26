@@ -4,7 +4,7 @@ import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 
-public interface UserServiceDao {
+public interface UserDao {
     User addUser(User user);
 
     User updateUser(Long id, User user);
@@ -14,4 +14,6 @@ public interface UserServiceDao {
     void deleteUserById(Long id);
 
     List<User> getAllUsers();
+
+    boolean checkEmail(User user);
 }

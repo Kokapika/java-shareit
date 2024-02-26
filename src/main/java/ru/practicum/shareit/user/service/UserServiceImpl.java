@@ -12,14 +12,14 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceDtoImpl implements UserServiceDto {
-    private final UserServiceDao userServiceDao;
+public class UserServiceImpl implements UserService {
+    private final UserDao userService;
 
     @Override
     public UserDto addUser(UserDto userDto) {
         User user = UserMapper.toUser(userDto);
         checkEmail(user);
-        return UserMapper.toUserDto(userServiceDao.addUser(user));
+        return UserMapper.toUserDto(userService.addUser(user));
     }
 
     @Override
@@ -42,7 +42,7 @@ public class UserServiceDtoImpl implements UserServiceDto {
             user.setEmail(userFromMemory.getEmail());
         }
         user.setId(id);
-        return UserMapper.toUserDto(userServiceDao.updateUser(id, user));
+        return UserMapper.toUserDto(userService.updateUser(id, user));
     }
 
     @Override
@@ -50,14 +50,14 @@ public class UserServiceDtoImpl implements UserServiceDto {
         if (!isUserInMemory(id)) {
             throw new NotFoundException("Пользователя с id = " + id + " не существует");
         }
-        User user = userServiceDao.findUserById(id);
+        User user = userService.findUserById(id);
         return UserMapper.toUserDto(user);
     }
 
     @Override
     public void deleteUserById(Long id) {
         if (isUserInMemory(id)) {
-            userServiceDao.deleteUserById(id);
+            userService.deleteUserById(id);
         } else {
             throw new NotFoundException("Пользователя с id = " + id + " не существует");
         }
@@ -65,22 +65,19 @@ public class UserServiceDtoImpl implements UserServiceDto {
 
     @Override
     public List<UserDto> getAllUsers() {
-        return userServiceDao.getAllUsers().stream()
+        return userService.getAllUsers().stream()
                 .map(UserMapper::toUserDto)
                 .collect(Collectors.toList());
     }
 
     private void checkEmail(User user) {
-        boolean isEmailNotUnique = userServiceDao.getAllUsers().stream()
-                .anyMatch(thisUser -> thisUser.getEmail().equals(user.getEmail())
-                        && !thisUser.getId().equals(user.getId()));
-        if (isEmailNotUnique) {
+        if (!userService.checkEmail(user)) {
             throw new NotUniqueEmailException("Пользователь с такой электронной почтой уже существует");
         }
     }
 
     private boolean isUserInMemory(Long userId) {
-        return userServiceDao.getAllUsers().stream()
-                .anyMatch(user -> user.getId().equals(userId));
+        User user = userService.findUserById(userId);
+        return user != null;
     }
 }

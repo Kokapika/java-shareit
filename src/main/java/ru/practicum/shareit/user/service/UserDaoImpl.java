@@ -10,7 +10,7 @@ import java.util.*;
 
 @Repository
 @RequiredArgsConstructor
-public class UserServiceDaoImpl implements UserServiceDao {
+public class UserDaoImpl implements UserDao {
     private final Map<Long, User> users = new HashMap<>();
     private final Set<String> emails = new HashSet<>();
     private Long generatorId = 1L;
@@ -51,10 +51,12 @@ public class UserServiceDaoImpl implements UserServiceDao {
         return new ArrayList<>(users.values());
     }
 
-    private void checkEmail(User user) {
+    @Override
+    public boolean checkEmail(User user) {
         if (emails.contains(user.getEmail())) {
             throw new NotUniqueEmailException("Пользователь с такой электронной почтой уже существует");
         }
+        return true;
     }
 
     private void updateEmail(String oldEmail, String newEmail) {
